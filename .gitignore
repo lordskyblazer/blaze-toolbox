@@ -1,0 +1,30 @@
+# Kubernetes
+*.kubeconfig
+*_rsa
+*.pem
+*.key
+*.crt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+
+# Sensitive data
+secrets*.yml
+.env
+.env.local
+
+# Local development
+.kube/
+minikube/
+terraform.tfstate*
