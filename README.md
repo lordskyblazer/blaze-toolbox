@@ -34,3 +34,4 @@ kubectl apply -k infrastructure/
 
 # Deploy sample application
 kubectl apply -k applications/base/web-app/
+.
