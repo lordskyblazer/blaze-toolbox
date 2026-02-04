@@ -11,6 +11,22 @@ This repository follows GitOps principles and is organized for:
 
 ## 📁 Repository Structure
 
+```
+applications/
+├── base/              # Base application configurations
+│   └── nextjs-demo/   # Example Next.js application
+└── staging/           # Staging environment overlays
+
+clusters/              # Cluster-specific configurations
+helm-charts/           # Helm chart templates
+infrastructure/        # Infrastructure components (ingress, monitoring, etc.)
+manifests/             # Shared manifests (RBAC, network policies, etc.)
+```
+
+See [docs/APPLICATION_STRUCTURE.md](docs/APPLICATION_STRUCTURE.md) for detailed application organization guidelines.
+
+See [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) for resource management, shutdown procedures, and local development best practices.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -33,5 +49,28 @@ kubectl apply -f manifests/namespaces.yml
 kubectl apply -k infrastructure/
 
 # Deploy sample application
-kubectl apply -k applications/base/web-app/
-.
+kubectl apply -k applications/base/nextjs-demo/
+
+# Access the application (after setting up ingress or port-forward)
+kubectl port-forward service/nextjs-demo 8080:80
+# Then visit http://localhost:8080
+
+# When done, clean up
+kubectl delete -k applications/base/nextjs-demo/
+```
+
+## 📚 Documentation
+
+- [Application Structure Guide](docs/APPLICATION_STRUCTURE.md) - How to organize and structure applications
+- [Local Development Guide](docs/LOCAL_DEVELOPMENT.md) - Resource management, shutdown procedures, and best practices
+
+## 🛑 Quick Shutdown
+
+```bash
+# Delete application
+kubectl delete -k applications/base/nextjs-demo/
+
+# Or scale down to 0 (keeps config, stops pods)
+kubectl scale deployment nextjs-demo --replicas=0
+
+# Stop Docker Desktop when completely done (releases all resources)
