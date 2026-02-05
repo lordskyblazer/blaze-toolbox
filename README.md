@@ -13,9 +13,10 @@ This repository follows GitOps principles and is organized for:
 
 ```
 applications/
-├── base/              # Base application configurations
-│   └── nextjs-demo/   # Example Next.js application
-└── staging/           # Staging environment overlays
+├── base/                    # Base application configurations
+│   ├── nextjs-demo/        # Example Next.js application
+│   └── kubernetes-dashboard/ # Kubernetes Dashboard UI
+└── staging/                 # Staging environment overlays
 
 clusters/              # Cluster-specific configurations
 helm-charts/           # Helm chart templates
@@ -55,6 +56,11 @@ kubectl apply -k applications/base/nextjs-demo/
 kubectl port-forward service/nextjs-demo 8080:80
 # Then visit http://localhost:8080
 
+# Deploy Kubernetes Dashboard (optional - for cluster visualization)
+kubectl apply -k applications/base/kubernetes-dashboard/
+kubectl port-forward -n kubernetes-dashboard service/kubernetes-dashboard 8081:80
+# Then visit http://localhost:8081
+
 # When done, clean up
 kubectl delete -k applications/base/nextjs-demo/
 ```
@@ -63,6 +69,7 @@ kubectl delete -k applications/base/nextjs-demo/
 
 - [Application Structure Guide](docs/APPLICATION_STRUCTURE.md) - How to organize and structure applications
 - [Local Development Guide](docs/LOCAL_DEVELOPMENT.md) - Resource management, shutdown procedures, and best practices
+- [Kubernetes Dashboard Guide](docs/KUBERNETES_DASHBOARD.md) - Dashboard setup, access, and testing
 
 ## 🛑 Quick Shutdown
 
