@@ -1,0 +1,15 @@
+# Claims 1Gi of storage. Binds to postgres-pv on local dev.
+# In the cloud, a StorageClass would provision a volume instead.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  labels:
+    app: postgres
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

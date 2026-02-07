@@ -15,7 +15,8 @@ This repository follows GitOps principles and is organized for:
 applications/
 ├── base/                    # Base application configurations
 │   ├── nextjs-demo/        # Example Next.js application
-│   └── kubernetes-dashboard/ # Kubernetes Dashboard UI
+│   ├── kubernetes-dashboard/ # Kubernetes Dashboard UI
+│   └── postgres/           # PostgreSQL with PVC (persistent storage)
 └── staging/                 # Staging environment overlays
 
 clusters/              # Cluster-specific configurations
@@ -27,6 +28,8 @@ manifests/             # Shared manifests (RBAC, network policies, etc.)
 See [docs/APPLICATION_STRUCTURE.md](docs/APPLICATION_STRUCTURE.md) for detailed application organization guidelines.
 
 See [docs/LOCAL_DEVELOPMENT.md](docs/LOCAL_DEVELOPMENT.md) for resource management, shutdown procedures, and local development best practices.
+
+See [docs/STORAGE_GUIDE.md](docs/STORAGE_GUIDE.md) for how storage works locally vs in the cloud and ideas to expand the cluster.
 
 ## 🚀 Quick Start
 

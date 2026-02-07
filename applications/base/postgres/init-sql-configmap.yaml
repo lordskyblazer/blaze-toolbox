@@ -1,0 +1,32 @@
+# Runs once when the Postgres container first creates the database.
+# Use these tables from your app (e.g. Next.js) to record page check-ins, etc.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-sql
+  labels:
+    app: postgres
+data:
+  01-init.sql: |
+    -- Simple table: when someone checked our page (anonymous or by user_id)
+    CREATE TABLE IF NOT EXISTS page_checks (
+      id         SERIAL PRIMARY KEY,
+      checked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      page_path  VARCHAR(512),
+      visitor_id VARCHAR(128),   -- session id or "anonymous"
+      user_id    VARCHAR(128),   -- optional, if you have users
+      metadata   JSONB           -- optional extra (e.g. user_agent, ip hash)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_page_checks_checked_at ON page_checks(checked_at);
+    CREATE INDEX IF NOT EXISTS idx_page_checks_visitor_id ON page_checks(visitor_id);
+
+    -- Optional: audit-style log (who did what, when)
+    CREATE TABLE IF NOT EXISTS audit_log (
+      id         SERIAL PRIMARY KEY,
+      at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+      actor      VARCHAR(256),
+      action     VARCHAR(128),
+      resource   VARCHAR(256),
+      details    JSONB
+    );
