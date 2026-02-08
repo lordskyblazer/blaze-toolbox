@@ -84,3 +84,5 @@ kubectl delete -k applications/base/nextjs-demo/
 kubectl scale deployment nextjs-demo --replicas=0
 
 # Stop Docker Desktop when completely done (releases all resources)
+
+# test update for git credential manager
