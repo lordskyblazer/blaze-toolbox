@@ -1,0 +1,44 @@
+# applications/base/redis/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  redis.conf: |
+    # Redis configuration file
+
+    # Bind to all interfaces
+    bind 0.0.0.0
+
+    # Protected mode - we'll disable since we're in cluster
+    protected-mode no
+
+    # TCP keepalive
+    tcp-keepalive 300
+
+    # Log level
+    loglevel notice
+
+    # Databases
+    databases 16
+
+    # Save points (disabled for demo, enable for production)
+    # save 900 1
+    # save 300 10
+    # save 60 10000
+
+    # Append Only File
+    appendonly yes
+    appendfilename "appendonly.aof"
+    appendfsync everysec
+    no-appendfsync-on-rewrite no
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 64mb
+
+    # Max memory policy
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
+
+    # Slow log
+    slowlog-log-slower-than 10000
+    slowlog-max-len 128

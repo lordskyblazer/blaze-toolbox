@@ -1,0 +1,61 @@
+# applications/base/redis/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+            - name: REDIS_PORT
+              value: "6379"
+          command: ["redis-server"]
+          args: ["--requirepass", "$(REDIS_PASSWORD)", "--appendonly", "yes"]
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+            - name: redis-config
+              mountPath: /usr/local/etc/redis/redis.conf
+              subPath: redis.conf
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: redis-data
+          emptyDir: {}
+        - name: redis-config
+          configMap:
+            name: redis-config
