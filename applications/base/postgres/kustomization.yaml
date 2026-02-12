@@ -8,7 +8,7 @@ metadata:
 resources:
   - pv.yaml
   - pvc.yaml
-  - secret.yaml
+  # - secret.yaml
   - init-sql-configmap.yaml
   - deployment.yaml
   - service.yaml
@@ -16,3 +16,15 @@ resources:
 commonLabels:
   app: postgres
   managed-by: kustomize
+
+secretGenerator:
+  - name: postgres-credentials
+    literals:
+      - POSTGRES_PASSWORD=your-secure-password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - DATABASE_URL=postgresql://postgres:your-secure-password@postgres:5432/postgres
+# This is CRITICAL: it prevents Kustomize from adding a random
+# hash to the name, so the Next.js app can find it easily.
+generatorOptions:
+  disableNameSuffixHash: true

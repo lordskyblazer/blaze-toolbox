@@ -14,26 +14,87 @@ spec:
       labels:
         app: nextjs-demo
     spec:
+      enableServiceLinks: false
+      # --- INIT CONTAINER START ---
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -zv postgres 5432; do echo waiting for postgres; sleep 2; done;",
+            ]
+      # --- INIT CONTAINER END ---
       containers:
         - name: nextjs
-          # Using a simple web server for demo - replace with your Next.js image when ready
-          # For learning: This serves a simple HTML page
-          image: nginx:alpine
+          image: njsws:latest # Your real Next.js image
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - containerPort: 3000
               name: http
+          env:
+            # ---------- From ConfigMap (non-sensitive) ----------
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: NODE_ENV
+            - name: NEXT_PUBLIC_APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: NEXT_PUBLIC_APP_NAME
+            - name: NEXT_PUBLIC_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: NEXT_PUBLIC_API_URL
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: REDIS_HOST
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: POSTGRES_HOST
+            - name: SESSION_MAX_AGE
+              valueFrom:
+                configMapKeyRef:
+                  name: nextjs-config
+                  key: SESSION_MAX_AGE
+
+            # ---------- From Secrets (UPDATED) ----------
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret # This secret lives in the same namespace
+                  key: REDIS_PASSWORD
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  # This now points to the secret created in the postgres folder
+                  name: postgres-credentials
+                  key: DATABASE_URL # Change this from POSTGRES_PASSWORD
+
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
               memory: "256Mi"
               cpu: "200m"
-          # Optional: Add a custom HTML page
-          volumeMounts:
-            - name: html-content
-              mountPath: /usr/share/nginx/html
-      volumes:
-        - name: html-content
-          configMap:
-            name: nextjs-demo-html
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5

@@ -1,0 +1,9 @@
+# applications/base/nextjs-demo/nextjs-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextjs-config
+data:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_APP_NAME: "My Next.js Demo"
+  REDIS_HOST: "redis-service" # non-sensitive hostname

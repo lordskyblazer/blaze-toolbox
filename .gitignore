@@ -28,3 +28,6 @@ secrets*.yml
 .kube/
 minikube/
 terraform.tfstate*
+
+# Kustomize secrets
+applications/base/nextjs-demo/*.txt

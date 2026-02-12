@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redis-connectivity-test
+spec:
+  template:
+    spec:
+      containers:
+        - name: redis-tester
+          image: redis:7-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Testing Redis connection..."
+              redis-cli -h redis-service -p 6379 -a $REDIS_PASSWORD ping
+              if [ $? -eq 0 ]; then
+                echo "✅ Redis is reachable and authenticated!"
+                redis-cli -h redis-service -a $REDIS_PASSWORD info server | grep redis_version
+                echo "✅ Test completed successfully."
+              else
+                echo "❌ Failed to connect to Redis."
+                exit 1
+              fi
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+      restartPolicy: Never
+  backoffLimit: 2

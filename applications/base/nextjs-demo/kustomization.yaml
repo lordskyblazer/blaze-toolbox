@@ -1,15 +1,38 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-metadata:
-  name: nextjs-demo
-  namespace: default
-
 resources:
   - deployment.yaml
   - service.yaml
-  - configmap.yaml
+  # - configmap.yaml
 
-commonLabels:
-  app: nextjs-demo
-  managed-by: kustomize
+# Ensure secrets are available (they might be in other directories)
+# You can either reference them from the base or generate them here.
+configMapGenerator:
+  - name: nextjs-config
+    behavior: create
+    literals:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_NAME="My Next.js Demo"
+      - NEXT_PUBLIC_API_URL=/api
+      - REDIS_HOST=redis-service
+      - POSTGRES_HOST=postgres-service
+      - SESSION_MAX_AGE=86400
+
+secretGenerator:
+  - name: redis-secret
+    behavior: create
+    literals:
+      - REDIS_PASSWORD=your-secure-password # PLAIN TEXT HERE
+    # files:
+    #   - REDIS_PASSWORD=redis_password.txt # create a file with plain password
+  # - name: postgres-secret
+  #   behavior: create
+  #   literals:
+  #     - POSTGRES_HOST=postgres
+  #     - DATABASE_URL=postgresql://postgres:your-secure-password@postgres-service:5432/postgres
+  #     - POSTGRES_PASSWORD=your-secure-password # ADD THIS LINE
+  #     # Format: postgresql://[user]:[password]@[service-name]:[port]/[db-name]
+  #     # - DATABASE_URL=postgresql://postgres:your-secure-password@postgres-service:5432/postgres
+  #   # files:
+  #   #   - DATABASE_URL=db_url.txt

@@ -15,30 +15,42 @@ spec:
         app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:15-alpine
-        ports:
-        - containerPort: 5432
-          name: postgres
-        envFrom:
-        - secretRef:
-            name: postgres-credentials
-        volumeMounts:
-        - name: data
-          mountPath: /var/lib/postgresql/data
-        - name: init-sql
-          mountPath: /docker-entrypoint-initdb.d
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+              name: postgres
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          # --- ADD THIS SECTION ---
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
+            # NOTE: POSTGRES_HOST_AUTH_METHOD: "trust" is used for local dev
+            # to bypass PowerShell/Kustomize encoding issues.
+            # Switch to "md5" or "scram-sha-256" for production.
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "trust"
+          # ------------------------
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: postgres-data
-      - name: init-sql
-        configMap:
-          name: postgres-init-sql
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+        - name: init-sql
+          configMap:
+            name: postgres-init-sql

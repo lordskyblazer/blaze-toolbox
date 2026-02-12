@@ -1,67 +1,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nextjs-demo-html
-  labels:
-    app: nextjs-demo
+    name: nextjs-config
+    labels:
+        app: nextjs-demo
 data:
-  index.html: |
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Next.js Demo - Kubernetes</title>
-        <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-                margin: 0;
-                padding: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .container {
-                background: white;
-                padding: 3rem;
-                border-radius: 12px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                text-align: center;
-                max-width: 600px;
-            }
-            h1 {
-                color: #333;
-                margin-bottom: 1rem;
-            }
-            p {
-                color: #666;
-                line-height: 1.6;
-            }
-            .badge {
-                display: inline-block;
-                background: #667eea;
-                color: white;
-                padding: 0.5rem 1rem;
-                border-radius: 20px;
-                margin: 0.5rem;
-                font-size: 0.9rem;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>🚀 Next.js Demo</h1>
-            <p>Welcome to your Kubernetes-deployed Next.js application!</p>
-            <div>
-                <span class="badge">Kubernetes</span>
-                <span class="badge">Next.js</span>
-                <span class="badge">GitOps</span>
-            </div>
-            <p style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
-                Replace this with your actual Next.js image when ready.
-            </p>
-        </div>
-    </body>
-    </html>
+    # Next.js runtime environment
+    NODE_ENV: "production"
+
+    # Public variables exposed to browser (must start with NEXT_PUBLIC_)
+    NEXT_PUBLIC_APP_NAME: "My Next.js Demo"
+    NEXT_PUBLIC_API_URL: "/api"
+
+    # Service hosts – these are Kubernetes service names
+    REDIS_HOST: "redis-service"
+    POSTGRES_HOST: "postgres-service"
+
+    # You can add more non‑sensitive config here
+    SESSION_MAX_AGE: "86400"
