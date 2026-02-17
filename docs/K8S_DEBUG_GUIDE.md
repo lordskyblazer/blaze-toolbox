@@ -17,3 +17,8 @@
 * **Test Postgres**: `kubectl exec -it deployment/postgres -- psql -U postgres`
 * **Check Env Vars**: `kubectl exec <pod-name> -- env | Select-String "KEY"`
 * **Check Endpoints**: `kubectl get endpoints <service-name>`
+
+
+### CONTEXT
+
+The local Kubernetes cluster architecture for the Blaze-Toolbox K8s Development project includes a Next.js webserver connected to PostgreSQL and Redis services. Key components feature a Next.js webserver using a local image with health probes, a PostgreSQL service accessible on port 5432 with 'trust' authentication and local persistent storage, and a Redis service accessible on port 6379 secured with a password secret. Configuration and secrets are managed using Kustomize generators, with a specific secret, 'postgres-credentials', containing critical database access information and hashing disabled for consistency.

@@ -126,3 +126,49 @@ See [applications/base/postgres/README.md](../applications/base/postgres/README.
 - **Later:** Add PVCs for persistent data; in the cloud, same concepts but with cloud disks. That’s the natural way to expand storage in this cluster.
 
 If you want, next step can be a minimal **PersistentVolumeClaim + Deployment** example in this repo (e.g. under `applications/base/...`) so you can run it locally and compare behavior when you move to the cloud.
+---
+## Recommended Development Workflow
+
+### __Daily Development Cycle:__
+
+1. __Morning__: Start cluster and port forwards
+2. __Development__: Run Next.js locally, connect to cluster services
+3. __Testing__: Use local development for rapid iteration
+4. __Integration__: Build and deploy to cluster for integration testing
+5. __Cleanup__: Scale down or stop services when done
+
+### __Production Environment__
+
+- Use immutable images with specific tags
+- Enable all security features
+- Full monitoring and alerting
+- Resource quotas and auto-scaling
+
+__Phase 1: Basic Session Tracking__
+
+- Implement Redis-based session storage with TTL
+- Add middleware to track anonymous user sessions
+- Create simple visit logging to PostgreSQL
+
+__Phase 2: User Identification System__
+
+- Add a lightweight "identify yourself" feature
+- Store user preferences and visit history
+- Implement basic authentication with JWT tokens
+
+__Phase 3: Advanced Analytics__
+
+- Track user behavior patterns
+- Generate usage statistics and reports
+- Add A/B testing capabilities
+
+### 2. __Observability & Monitoring Stack__
+
+- __Prometheus + Grafana__: Add metrics collection for all services
+- __Loki__: Centralized logging for better debugging
+- __Jaeger__: Distributed tracing for request flows
+- __Health checks__: Enhanced liveness/readiness probes
+
+### 4. __Development & Deployment Improvements__
+
+- __Helm Charts__: Package applications for easier deployment
